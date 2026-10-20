@@ -5,7 +5,7 @@ description: Push a goal, project or task further along four lenses (altitude, d
 
 # Be ambitious
 
-Adapted from the kinds of ambition described in Anthropic's post "How to be more ambitious: A tutorial for humans with models" (October 2026): speed, altitude, depth and range. This skill turns them into a repeatable pass. The wording, the goal types, the Show lens and portfolio mode are additions.
+Adapted from the kinds of ambition described in Felix Rieseberg's post "How to be more ambitious: A tutorial for humans with models" (https://felixrieseberg.com/how-to-be-more-ambitious-a-tutorial-for-humans-with-models/, October 2026): speed, altitude, depth and range. This skill turns them into a repeatable pass. The wording, the goal types, the Show lens and portfolio mode are additions.
 
 ## Step 1: Pin it down
 

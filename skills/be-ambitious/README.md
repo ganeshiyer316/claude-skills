@@ -2,7 +2,7 @@
 
 A Claude skill that pushes any goal, project or task further, and hands back a stretch target, an outside judge, three moves for this week and a sharper prompt.
 
-It's built on the kinds of ambition in Anthropic's post "How to be more ambitious: A tutorial for humans with models" (October 2026): **altitude** (the goal behind the goal), **depth** (how the best in the field would do it) and **range** (borrowing from fields the task doesn't obviously need). I've added:
+It's built on ["How to be more ambitious: A tutorial for humans with models"](https://felixrieseberg.com/how-to-be-more-ambitious-a-tutorial-for-humans-with-models/) (October 2026) by [Felix Rieseberg](https://felixrieseberg.com), an engineering manager at Anthropic who works on Claude. It takes the post's kinds of ambition: **altitude** (the goal behind the goal), **depth** (how the best in the field would do it) and **range** (borrowing from fields the task doesn't obviously need). I've added:
 
 - **Goal types**, so a learning project isn't judged like a revenue one
 - **A Show lens**, which asks what the work could produce that's worth sharing
