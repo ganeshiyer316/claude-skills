@@ -7,7 +7,6 @@ Open-source skills for Claude, by [Ganesh Iyer](https://github.com/ganeshiyer316
 | Skill | What it does | Added |
 |---|---|---|
 | [be-ambitious](skills/be-ambitious) | Pushes any goal or task further along altitude, depth, range and show, and returns a stretch target, an outside judge and next moves. | 10/2026 |
-| [publish-skill](skills/publish-skill) | Checks, packages and publishes a skill to this repo, and drafts the posts to share it. | 10/2026 |
 
 ## Install
 
