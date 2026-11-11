@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Example App Teardown</title>
+<!-- TEMPLATE: every product name, endpoint and field below is FICTIONAL ("Example App" at example.app).
+     Replace them with what your capture shows. Keep the section structure.
+     For Claude Artifacts: delete the doctype/html/head/body wrapper lines and the two mermaid <script> tags. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+/* Layout: one reading column; numbered steps only where order is real; tables scroll inside their own box */
+:root{
+  --bg:#f6f7fb; --surface:#ffffff; --fg:#1b1f2e; --muted:#5b6275; --line:#dfe2ec;
+  --accent:#4b4fd6; --accent-soft:#e8e9fd; --guess:#b45f06; --guess-soft:#fdf0e1; --seen:#167a52; --seen-soft:#e2f5ec;
+  --display:"Space Grotesk",system-ui,sans-serif; --body:"Inter",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#11131c; --surface:#191c28; --fg:#e8eaf3; --muted:#a0a6ba; --line:#2c3042;
+  --accent:#9a9dff; --accent-soft:#25274a; --guess:#f0a85a; --guess-soft:#3a2a17; --seen:#5fd3a0; --seen-soft:#143326; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#11131c; --surface:#191c28; --fg:#e8eaf3; --muted:#a0a6ba; --line:#2c3042;
+  --accent:#9a9dff; --accent-soft:#25274a; --guess:#f0a85a; --guess-soft:#3a2a17; --seen:#5fd3a0; --seen-soft:#143326; color-scheme:dark}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:40px 64px}
+.wrap{max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:44px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;line-height:1.2;margin:0}
+h1{font-size:clamp(2rem,5vw,2.8rem)} h2{font-size:1.5rem;margin-bottom:12px} h3{font-size:1.05rem}
+p{margin:0;max-width:65ch}
+section{display:flex;flex-direction:column;gap:14px}
+.lede{color:var(--muted);font-size:1.08rem}
+.eyebrow{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:600}
+code{font-family:var(--mono);font-size:.86em;background:var(--accent-soft);padding:1px 6px;border-radius:5px;overflow-wrap:anywhere}
+.tag{display:inline-block;font-size:.72rem;font-weight:600;padding:2px 8px;border-radius:99px;letter-spacing:.03em;white-space:nowrap}
+.seen{background:var(--seen-soft);color:var(--seen)} .guess{background:var(--guess-soft);color:var(--guess)}
+.diagram{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;overflow-x:auto}
+.mermaid{margin:0;background:transparent;min-width:640px}
+ol.steps{list-style:none;counter-reset:s;margin:0;padding:0;display:flex;flex-direction:column}
+ol.steps li{counter-increment:s;display:grid;grid-template-columns:40px 1fr;gap:14px;padding:16px 0;border-top:1px solid var(--line)}
+ol.steps li::before{content:counter(s);font-family:var(--display);font-weight:700;font-size:1.1rem;width:32px;height:32px;border-radius:50%;
+  display:grid;place-items:center;background:var(--accent-soft);color:var(--accent)}
+ol.steps li>div{min-width:0;display:flex;flex-direction:column;gap:6px}
+.small{font-size:.9rem;color:var(--muted)}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.92rem;min-width:600px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+tr:last-child td{border-bottom:0}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.card .head{display:flex;justify-content:space-between;gap:8px;align-items:baseline;flex-wrap:wrap}
+ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;max-width:65ch}
+.note{border-left:3px solid var(--line);padding-left:14px;color:var(--muted);font-size:.92rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header style="display:flex;flex-direction:column;gap:12px">
+  <span class="eyebrow">Teardown · example.app · fictional example</span>
+  <h1>How Example App turns a sentence into an illustrated story</h1>
+  <p class="lede">I watched one real story being made in a logged-in session for 10 minutes. I recorded the app's web requests (field names only) and every website it fetched files from.</p>
+  <p class="small"><span class="tag seen">Seen</span> means it showed up in the recording. <span class="tag guess">Best guess</span> means it's inferred from clues.</p>
+</header>
+
+<section>
+  <h2>The big picture</h2>
+  <p>The browser sends your idea to Example App's server. AI services there write the story, draw the pictures and record the narration, then hand back a "recipe" plus file links. Your browser shows the result.</p>
+  <div class="diagram">
+<pre class="mermaid">
+flowchart LR
+  U["You type an idea"] --> FE["Example App website<br/>(in your browser)"]
+  FE -->|"idea + style"| API["Example App server<br/>api.example.app"]
+  subgraph AI["AI services (hidden on the server)"]
+    direction TB
+    A1["Story writer<br/>idea → pages of text"]
+    A2["Illustrator<br/>text → images"]
+    A3["Narrator<br/>text → speech"]
+  end
+  API --> A1 --> A2
+  A1 --> A3
+  A2 --> ST[("File storage")]
+  A3 --> ST
+  ST --> CDN["File delivery<br/>cdn.example.app"]
+  API -->|"recipe: list of pages"| FE
+  CDN -->|"images, audio"| FE
+</pre>
+  </div>
+</section>
+
+<section>
+  <h2>Step by step, as the page does it</h2>
+  <ol class="steps">
+    <li><div><h3>You type your idea</h3>
+      <p>The page checks your credits before anything else.</p>
+      <span class="small">Gets back: <code>credits</code>, <code>plan</code></span></div></li>
+    <li><div><h3>You press create (the main call)</h3>
+      <p>One request, <code>POST /stories</code>, sends your idea and gets back a job id.</p>
+      <span class="small">Sends: <code>prompt</code>, <code>style</code>, <code>language</code> · Gets back: <code>job_id</code></span></div></li>
+    <li><div><h3>The waiting screen</h3>
+      <p>The page asks "is it ready yet?" every few seconds (<code>/jobs/{id}</code>) until <code>status</code> says done.</p></div></li>
+    <li><div><h3>The story loads</h3>
+      <p>It fetches the finished story, then the images and audio for each page from the file server.</p>
+      <span class="small">Gets back: <code>pages[].text</code>, <code>pages[].image_url</code>, <code>pages[].audio_url</code></span></div></li>
+  </ol>
+</section>
+
+<section>
+  <h2>Where the pictures, sound and video come from</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Website</th><th>What it supplied</th><th>Who runs it</th></tr></thead>
+    <tbody>
+      <tr><td><code>cdn.example.app</code></td><td>Images (<code>.webp</code>), narration (<code>.mp3</code>)</td><td>Example App's file delivery</td></tr>
+      <tr><td><code>api.example.app</code></td><td>Data only (JSON)</td><td>Example App's server</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Analytics trackers also loaded. List them here; they don't serve content.</p>
+</section>
+
+<section>
+  <h2>Which AI is likely behind each part</h2>
+  <p>The browser never talked to an AI company directly, so these are inferred from clues.</p>
+  <div class="cards">
+    <div class="card"><div class="head"><h3>Story writer</h3><span class="tag guess">Best guess</span></div>
+      <p>A large language model. The clue is a single long wait on the main call before any text appears.</p></div>
+    <div class="card"><div class="head"><h3>Illustrator</h3><span class="tag guess">Best guess</span></div>
+      <p>An image-generation model. The images arrive one by one, each with its own job status.</p></div>
+    <div class="card"><div class="head"><h3>Narrator</h3><span class="tag guess">Best guess</span></div>
+      <p>A text-to-speech service. Give the clue that points to a vendor, or say there isn't one.</p></div>
+    <div class="card"><div class="head"><h3>Rendering</h3><span class="tag seen">Seen</span></div>
+      <p>The pages are put together in the browser from the downloaded images and audio.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>The stack, in one line each</h2>
+  <ul>
+    <li><b>Website:</b> the framework, e.g. Next.js from <code>_next/static</code> <span class="tag seen">Seen</span></li>
+    <li><b>Server:</b> API style and likely language <span class="tag guess">Best guess</span></li>
+    <li><b>Files:</b> storage and CDN provider <span class="tag seen">Seen</span></li>
+    <li><b>Long jobs:</b> start the job, then poll for its status <span class="tag seen">Seen</span></li>
+  </ul>
+</section>
+
+<section>
+  <h2>Ideas to borrow for your product</h2>
+  <ul>
+    <li>Three or four patterns worth copying, each in one plain sentence.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>What I did and didn't do</h2>
+  <ul>
+    <li>Watched only. Nothing was replayed, and no paid features were touched.</li>
+    <li>Recorded field names only, never their values. No logins, cookies or source code were saved.</li>
+    <li>Covered N minutes and N requests, plus a list of every outside website contacted.</li>
+  </ul>
+  <p class="note">Still unknown: list what the capture couldn't show.</p>
+</section>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default' });</script>
+</body>
+</html>
