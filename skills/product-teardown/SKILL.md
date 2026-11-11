@@ -82,6 +82,11 @@ Things that catch people out:
 - Capture starts when REA attaches, so anything before that isn't seen.
 - If the page navigates to an origin outside `allowed_origins`, collection stops.
 - If your agent's tool-call timeout is shorter than 10 minutes, use a shorter `observation_ms`.
+- **A full page reload or hard navigation stops the capture** (`target_changed` / `target_unavailable`). Never ask the user to reload once recording has started; in-app navigation within a single-page app is fine. If it fails, list targets again and restart only once the URL has settled.
+- **Live connections opened before recording starts are invisible.** WebSocket links created on page load can't be seen afterwards, though the domain logger still shows they exist. Start recording just before the main action, so links it opens are caught.
+- **Check the user is at the keyboard before starting.** A 10-minute window that runs while they're away captures only background polling. Have them get to the button, fill in the form, and say "ready", then start in the same message as "go".
+- If REA misses the key moment, the logger's per-origin first and last timestamps still give a rough timeline, and the `resources` list in the REA result shows media loaded before recording started.
+- WebSocket messages sometimes carry their content as one JSON-encoded string field (e.g. `event: string`). Its inner fields aren't visible as shapes; say so rather than guessing.
 
 ### 4. Analyse
 
@@ -99,7 +104,10 @@ Useful clues:
 - The browser never calls OpenAI, Anthropic, ElevenLabs or similar directly: the AI runs on the product's server, so the vendor is a guess.
 - `job_id` plus `status` polling plus a generated file per job: an asynchronous generative model.
 - Speech audio with mouth-shape ("viseme") data alongside it: text-to-speech with viseme output, such as Amazon Polly speech marks or Azure Speech. Match it to the cloud they host on.
-- 3D model downloads (`.fbx`, `.glb`) and no video files: rendering happens in the browser.
+- 3D model downloads (`.fbx`, `.glb`) and no video files: rendering happens in the browser. A server-made `.mp4` instead: the video is assembled on the server.
+- Character objects with `triggerWord`, `finishedTraining` or training `progress`: a small custom image model (LoRA) trained per character, usually on an open model such as Flux or Stable Diffusion.
+- A create call that returns `jobId` and then a WebSocket to `appsync-realtime-api` (or similar pub/sub): progress is pushed, not polled. `/event/realtime` is AppSync Events; `/graphql` is AppSync GraphQL.
+- Flags like `includeModerationCheck`: a safety check runs before generation.
 - `$type` / `$values` in JSON: a .NET (Json.NET) backend. Fields like `eulerAngles` or `sqrMagnitude`: Unity game-engine types.
 - `_next/static`: Next.js. `s3…amazonaws.com`: AWS S3. `storage.googleapis.com`: Google Cloud. `blob.core.windows.net`: Azure. Paths containing `stripe`: Stripe payments.
 - Trackers (clarity.ms, hubspot, facebook, linkedin, mixpanel, google-analytics, segment) are analytics, not media.
