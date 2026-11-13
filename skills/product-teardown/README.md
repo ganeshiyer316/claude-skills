@@ -29,11 +29,17 @@ You need [REA](https://github.com/morluto/rea) connected to your agent (`npx rea
 - **Codex:** copy the folder to `~/.codex/skills/`.
 - **Claude app:** download `product-teardown.zip` from the latest release and upload it as a custom skill. Note that the browser-watching steps need a local agent such as Claude Code.
 
+Tested on macOS with Claude Code. Linux, Windows and Codex should work but haven't been tested yet. Issues welcome.
+
 ## Use
 
 > Tear down how example.com turns a prompt into a video. I'll make one in my logged-in session.
 
 The agent opens the browser, tells you when to start, and tells you when it's done.
+
+Works on any web app, not just AI products. For example:
+
+> Tear down how example.com's checkout works. I'll buy something small in my logged-in session.
 
 ## Principles and limits
 
